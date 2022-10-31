@@ -1,0 +1,9 @@
+package com.daomingedu.onecp.mvp.contract
+
+import com.jess.arms.mvp.IView
+
+class MainContract {
+    interface View: IView {
+
+    }
+}

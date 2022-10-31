@@ -1,0 +1,44 @@
+package com.daomingedu.onecp.mvp.contract
+
+import com.daomingedu.onecp.mvp.model.entity.BaseJson
+import com.daomingedu.onecp.mvp.model.entity.UserInfoBean
+import com.jess.arms.mvp.IModel
+import com.jess.arms.mvp.IView
+import io.reactivex.Observable
+
+/**
+ * Created by jianhongxu on 3/18/21
+ * Description
+ */
+interface EnrollTestContract {
+    //对于经常使用的关于UI的方法可以定义到IView中,如显示隐藏进度条,和显示文字消息
+    interface View : IView {
+        fun requestGetSignInfoSuccess(data: UserInfoBean?)
+        fun requestSaveTestSign()
+    }
+
+    //Model层定义接口,外部只需关心Model返回的数据,无需关心内部细节,即是否使用缓存
+    interface Model : IModel {
+        fun getSignInfo(
+            sessionId: String
+        ): Observable<BaseJson<UserInfoBean>>
+
+        fun saveTestSign(
+            sessionId: String,
+            testId: String,
+            name: String,
+            identityType: Int,
+            identityCard: String,
+            birthDay: String,
+            sex: String,
+            province: String,
+            city: String,
+            county: String,
+            schoolId: String,
+            gradeName: String,
+            classesName: String,
+            gradeNo: String,
+            classesNo: String,
+        ): Observable<BaseJson<Any>>
+    }
+}

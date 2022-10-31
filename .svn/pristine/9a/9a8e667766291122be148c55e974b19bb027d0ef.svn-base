@@ -1,0 +1,44 @@
+package com.daomingedu.onecp.mvp.contract
+
+import com.daomingedu.onecp.mvp.model.entity.BaseJson
+import com.daomingedu.onecp.mvp.model.entity.UserInfoBean
+import com.jess.arms.mvp.IModel
+import com.jess.arms.mvp.IView
+import io.reactivex.Observable
+
+/**
+ * Created by jianhongxu on 3/21/21
+ * Description
+ */
+interface ModifyStudentInfoContract {
+
+    interface View : IView {
+        fun requestSaveStudentInfoSuccess()
+        fun requestStudentInfoSuccess(bean: UserInfoBean?)
+    }
+
+    interface Model : IModel {
+        fun saveStudentInfo(
+            sessionId: String,
+            name: String,
+            identityType: Int,
+            identityCard: String,
+            birthDay: String,
+            sex: String,
+            province: String,
+            city: String,
+            county: String,
+            schoolId: String,
+            gradeName: String,
+            classesName: String,
+            gradeNo: String,
+            classesNo: String,
+        ): Observable<BaseJson<Any>>
+
+        fun getStudentInfo(
+            sessionId: String
+        ): Observable<BaseJson<UserInfoBean>>
+    }
+
+
+}

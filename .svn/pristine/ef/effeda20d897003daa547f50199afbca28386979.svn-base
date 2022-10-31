@@ -1,0 +1,103 @@
+package com.daomingedu.onecp.mvp.model.api.service
+
+import com.daomingedu.onecp.mvp.model.entity.*
+import io.reactivex.Observable
+import retrofit2.http.Field
+import retrofit2.http.FormUrlEncoded
+import retrofit2.http.POST
+import javax.annotation.PostConstruct
+
+/**
+ * Created by jianhongxu on 3/17/21
+ * Description
+ */
+interface TestService {
+
+    /**
+     * 获取评测列表
+     */
+    @FormUrlEncoded
+    @POST("api/student/getTests")
+    fun getTest(
+        @Field("sessionId")sessionId:String
+    ):Observable<BaseJson<MutableList<TestListBean>>>
+
+
+    @FormUrlEncoded
+    @POST("api/student/getTestInfo.do")
+    fun getTestInfo(
+        @Field("sessionId")sessionId:String,
+        @Field("testId")testId:String
+    ):Observable<BaseJson<TestInfo>>
+
+    /**
+     * 学生报名信息提交
+     */
+    @FormUrlEncoded
+    @POST("api/student/saveTestSign.do")
+    fun saveTestSign(
+        @Field("testSignId")testSignId:String,
+        @Field("sessionId")sessionId:String,
+        @Field("testId")testId:String,
+        @Field("name")name:String,
+        @Field("identityType")identityType:Int,
+        @Field("identityCard")identityCard:String,
+        @Field("birthDay")birthDay:String,
+        @Field("sex")sex:String,
+        @Field("province")province:String,
+        @Field("city")city:String,
+        @Field("county")county:String,
+        @Field("schoolId")schoolId:String,
+        @Field("gradeName")gradeName:String,
+        @Field("classesName")classesName:String,
+        @Field("gradeNo")gradeNo:String,
+        @Field("classesNo")classesNo:String,
+    ):Observable<BaseJson<Any>>
+
+
+    /**
+     * 获取人脸识别
+     */
+    @FormUrlEncoded
+    @POST("api/student/getCompareFaceScore.do")
+    fun getCompareFaceScore(
+        @Field("sessionId")sessionId:String,
+        @Field("testSignId")testSignId:String,
+        @Field("base64Image")base64Image:String,
+    ):Observable<BaseJson<CompareFaceScoreBean>>
+
+
+    /**
+     * 获取视频上传前说需要的参数
+     */
+    @FormUrlEncoded
+    @POST("api/student/getUploadVideoParam.do.do")
+    fun getUploadVideoParam(
+        @Field("sessionId")sessionId:String,
+        @Field("testSignId")testSignId:String
+    ):Observable<BaseJson<UploadVideoParamBean>>
+
+
+    /**
+     * 上传腾讯云后保存视频
+     */
+    @FormUrlEncoded
+    @POST("api/student/saveUploadVideo.do")
+    fun saveUploadVideo(
+        @Field("sessionId")sessionId:String,
+        @Field("testSignId")testSignId:String,
+        @Field("videoPath")videoPath:String,
+        @Field("videoSize")videoSize:String,
+        @Field("isAudit")isAudit:Int
+    ):Observable<BaseJson<Any>>
+
+    /**
+     * 评测成绩
+     */
+    @FormUrlEncoded
+    @POST("api/student/getTestSignResult.do")
+    fun getTestSignResult(
+        @Field("sessionId")sessionId: String,
+        @Field("testId")testId: String
+    ):Observable<BaseJson<TestSignResultBean>>
+}

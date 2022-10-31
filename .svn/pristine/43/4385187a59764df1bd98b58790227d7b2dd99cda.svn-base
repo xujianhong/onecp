@@ -1,0 +1,28 @@
+package com.daomingedu.onecp.mvp.model.entity
+
+import java.util.*
+
+/**
+ * Created by jianhongxu on 3/19/21
+ * Description
+ */
+data class UploadVideoParamBean(
+    val uploadKey: String,
+    val bucketName: String,
+    val cosTempKey: CosTempKey,
+    val region: String)
+
+
+data class CosTempKey(
+    val credentials: Credentials,
+    val expiration: String,
+    val expiredTime: Int,
+    val requestId: String,
+    val startTime: Int
+)
+
+data class Credentials(
+    val sessionToken: String,
+    val tmpSecretId: String,
+    val tmpSecretKey: String
+)

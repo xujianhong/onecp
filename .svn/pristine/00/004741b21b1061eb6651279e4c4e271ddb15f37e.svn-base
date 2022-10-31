@@ -1,0 +1,102 @@
+package com.daomingedu.onecp.mvp.model
+
+import android.app.Application
+import com.daomingedu.onecp.mvp.model.entity.AboutUsBean
+import com.daomingedu.art.mvp.model.entity.RegisterBean
+import com.daomingedu.onecp.mvp.contract.RegisterContract
+import com.daomingedu.onecp.mvp.model.api.service.CommonService
+import com.daomingedu.onecp.mvp.model.api.service.CustomerService
+import com.daomingedu.onecp.mvp.model.entity.BaseJson
+import com.google.gson.Gson
+import com.jess.arms.di.scope.ActivityScope
+import com.jess.arms.integration.IRepositoryManager
+import com.jess.arms.mvp.BaseModel
+import io.reactivex.Observable
+import javax.inject.Inject
+
+
+/**
+ * ================================================
+ * Description:
+ * <p>
+ * Created by MVPArmsTemplate on 04/25/2019 20:07
+ * <a href="mailto:jess.yan.effort@gmail.com">Contact me</a>
+ * <a href="https://github.com/JessYanCoding">Follow me</a>
+ * <a href="https://github.com/JessYanCoding/MVPArms">Star me</a>
+ * <a href="https://github.com/JessYanCoding/MVPArms/wiki">See me</a>
+ * <a href="https://github.com/JessYanCoding/MVPArmsTemplate">模版请保持更新</a>
+ * ================================================
+ */
+@ActivityScope
+class RegisterModel
+@Inject
+constructor(repositoryManager: IRepositoryManager) : BaseModel(repositoryManager),
+    RegisterContract.Model {
+    override fun sendSMS(key: String, mobile: String, type: Int): Observable<BaseJson<Any>> {
+        return mRepositoryManager.obtainRetrofitService(CommonService::class.java)
+            .sendSMS(key, mobile, type)
+    }
+
+    override fun aboutUs(key: String): Observable<BaseJson<AboutUsBean>> {
+        return mRepositoryManager.obtainRetrofitService(CommonService::class.java).aboutUs(key)
+    }
+
+    override fun reg(
+        name: String,
+        mobile: String,
+        password: String,
+        identityType: Int,
+
+        identityCard: String,
+        birthDay: String,
+        sex: String,
+        province: String,
+        city: String,
+        county: String,
+        schoolId: String,
+        gradeName: String,
+        classesName: String,
+        gradeNo: String,
+        classesNo: String,
+
+        channel: Int,
+        deviceNo: String?,
+        versionCode: Int,
+        code: String
+    ): Observable<BaseJson<RegisterBean>> {
+        return mRepositoryManager.obtainRetrofitService(CustomerService::class.java)
+            .reg(
+                name,
+                mobile,
+                password,
+                identityType,
+                identityCard,
+                birthDay,
+                sex,
+                province,
+                city,
+                county,
+                schoolId,
+                gradeName,
+                classesName,
+                gradeNo,
+                classesNo,
+                channel,
+                deviceNo,
+                versionCode,
+                code
+            )
+    }
+
+
+
+    @Inject
+    lateinit var mGson: Gson;
+
+    @Inject
+    lateinit var mApplication: Application;
+
+    override fun onDestroy() {
+        super.onDestroy();
+    }
+}

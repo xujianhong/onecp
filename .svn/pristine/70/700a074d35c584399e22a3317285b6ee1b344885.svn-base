@@ -1,0 +1,5 @@
+include ':videocompressor'
+include ':videoRecord'
+include ':imagepicker'
+include ':app'
+rootProject.name = "Onecp"

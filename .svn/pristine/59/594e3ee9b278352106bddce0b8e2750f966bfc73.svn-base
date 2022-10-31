@@ -1,0 +1,10 @@
+package com.daomingedu.onecp.mvp.presenter
+
+import com.jess.arms.di.scope.ActivityScope
+import javax.inject.Inject
+
+@ActivityScope
+class MainPresenter
+@Inject
+constructor(){
+}

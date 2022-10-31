@@ -1,0 +1,96 @@
+package com.daomingedu.onecp.mvp.ui.activity
+
+import android.app.Activity
+import android.content.Intent
+import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
+import com.daomingedu.onecp.R
+import com.daomingedu.onecp.app.Constant
+import com.daomingedu.onecp.di.component.DaggerSchoolComponent
+import com.daomingedu.onecp.di.module.SchoolModule
+import com.daomingedu.onecp.mvp.contract.SchoolContract
+import com.daomingedu.onecp.mvp.presenter.SchoolPresenter
+import com.daomingedu.onecp.mvp.ui.adapter.SchoolAdapter
+import com.jess.arms.base.BaseActivity
+import com.jess.arms.di.component.AppComponent
+import com.jess.arms.utils.ArmsUtils
+import kotlinx.android.synthetic.main.activity_school.*
+import timber.log.Timber
+import javax.inject.Inject
+
+
+/**
+ * Created by jianhongxu on 3/17/21
+ * Description 选择学校
+ */
+class SchoolAct : BaseActivity<SchoolPresenter>(), SchoolContract.View {
+    @Inject
+    lateinit var mAdapter: SchoolAdapter
+
+    var regionNumber: String? = ""
+    override fun setupActivityComponent(appComponent: AppComponent) {
+        DaggerSchoolComponent.builder()
+            .appComponent(appComponent)
+            .schoolModule(SchoolModule(this))
+            .build()
+            .inject(this)
+    }
+
+    override fun initView(savedInstanceState: Bundle?): Int {
+        return R.layout.activity_school
+    }
+
+    override fun initData(savedInstanceState: Bundle?) {
+
+
+        recyclerView.adapter = mAdapter.apply {
+            setOnItemClickListener { adapter, view, position ->
+                mAdapter.getItem(position)?.apply {
+//                    Timber.e("${this.name}")
+
+                    val intent = Intent()
+                    intent.putExtra(Constant.SCHOOL_NAME_EXTRA, this.name)
+                    intent.putExtra(Constant.SCHOOL_NUMBER_EXTRA, this.id)
+                    setResult(Activity.RESULT_OK, intent)
+                    killMyself()
+                }
+            }
+        }
+
+        etSearchSchool.addTextChangedListener(object :TextWatcher{
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                Timber.e("beforeTextChanged "+s.toString().trim())
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                Timber.e("onTextChanged "+s.toString().trim())
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+                Timber.e("afterTextChanged "+s.toString().trim())
+                mPresenter?.school(regionNumber!!,s.toString().trim())
+
+            }
+
+        })
+
+        regionNumber = intent.getStringExtra(Constant.REGION_EXTRA)
+        title = "选择学校"
+        //TODO 测试学校所用的区号
+//        regionNumber = "500101"
+        mPresenter?.school(regionNumber!!, "")
+    }
+
+    override fun showMessage(message: String) {
+        ArmsUtils.snackbarText(message)
+    }
+
+    override fun killMyself() {
+        finish()
+    }
+
+    override fun launchActivity(intent: Intent) {
+        ArmsUtils.startActivity(intent)
+    }
+}

@@ -1,0 +1,110 @@
+package com.daomingedu.onecp.mvp.ui.activity
+
+import android.content.Intent
+import android.os.Bundle
+import android.text.TextUtils
+import com.daomingedu.onecp.R
+import com.daomingedu.onecp.app.Constant
+import com.daomingedu.onecp.app.onClick
+import com.daomingedu.onecp.di.component.DaggerLoginComponent
+import com.daomingedu.onecp.di.module.LoginModule
+import com.daomingedu.onecp.mvp.contract.LoginContract
+import com.daomingedu.onecp.mvp.model.entity.AboutUsBean
+import com.daomingedu.onecp.mvp.presenter.LoginPresenter
+import com.daomingedu.onecp.mvp.ui.widget.LoadingDialog
+import com.jess.arms.base.BaseActivity
+import com.jess.arms.di.component.AppComponent
+import com.jess.arms.integration.AppManager
+import com.jess.arms.utils.ArmsUtils
+import kotlinx.android.synthetic.main.activity_login.*
+import org.jetbrains.anko.startActivity
+import org.jetbrains.anko.support.v4.startActivity
+import timber.log.Timber
+
+class LoginAct: BaseActivity<LoginPresenter>(), LoginContract.View {
+    val loadingDialog: LoadingDialog by lazy {
+        LoadingDialog(this)
+    }
+
+
+    override fun setupActivityComponent(appComponent: AppComponent) {
+        DaggerLoginComponent //如找不到该类,请编译一下项目
+            .builder()
+            .appComponent(appComponent)
+            .loginModule(LoginModule(this))
+            .build()
+            .inject(this)
+
+    }
+
+    override fun initView(savedInstanceState: Bundle?): Int {
+        return R.layout.activity_login
+    }
+
+    override fun initData(savedInstanceState: Bundle?) {
+        AppManager.getAppManager().killAll(LoginAct::class.java)
+
+        tvRegisterProtocol.onClick {
+            mPresenter?.getProtocol()
+        }
+//        tvForgetPwd.onClick {
+//            startActivity<ForgetPasswordAct>()
+//        }
+        tvRegister.onClick {
+            startActivity<RegisterAct>()
+        }
+        btnLogin.onClick {
+            val mobile = etInputPhoneNumber.text.toString().trim()
+            if (TextUtils.isEmpty(mobile)) {
+                ArmsUtils.makeText(application,"手机号不能为空")
+                return@onClick
+            }
+            val pwd = etInputPwd.text.toString().trim()
+            if (TextUtils.isEmpty(pwd)) {
+                ArmsUtils.makeText(application,"密码不能为空")
+                return@onClick
+            }
+            mPresenter?.login(mobile,pwd)
+        }
+        btnExit.onClick {
+            killMyself()
+        }
+    }
+
+    override fun requestLoginSuccess() {
+        Timber.d("登陆成功")
+        startActivity<MainAct>()
+    }
+
+    override fun requestProtocolSuccess(data: AboutUsBean?) {
+        data?.let {
+            startActivity<CommonWebAct>(
+                Constant.URL_EXTRA to it.userAgreement,
+                Constant.TITLE_EXTRA to "用户隐私协议"
+            )
+        }
+
+    }
+
+    override fun showLoading() {
+        loadingDialog.show()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        loadingDialog.dismiss()
+    }
+    override fun hideLoading() {
+        loadingDialog.hide()
+    }
+    override fun showMessage(message: String) {
+        ArmsUtils.snackbarText(message)
+    }
+    override fun launchActivity(intent: Intent) {
+        ArmsUtils.startActivity(intent)
+    }
+
+    override fun killMyself() {
+        finish()
+    }
+}

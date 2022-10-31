@@ -1,0 +1,19 @@
+package com.daomingedu.onecp.mvp.model.entity
+
+data class UserInfoBean(
+    val mobilePhone:String,
+    val birthDay: String,
+    val name: String,
+    val sex: String,
+    val identityType: String,
+    val identityCard: String,
+    val photoImg: String,
+    val photoImgCheck: String,
+    val status: String,
+    val province: String,
+    val city: String,
+    val county: String,
+    val schoolName: String,
+    val gradeName: String,
+    val classesName: String,
+)

@@ -1,0 +1,108 @@
+package com.daomingedu.onecp.mvp.ui.fragment
+
+import android.content.Intent
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import com.daomingedu.onecp.R
+import com.daomingedu.onecp.app.Constant
+import com.daomingedu.onecp.di.component.DaggerTestListComponent
+import com.daomingedu.onecp.di.module.TestListModule
+
+import com.daomingedu.onecp.mvp.contract.TestListContract
+import com.daomingedu.onecp.mvp.model.entity.TestListBean
+import com.daomingedu.onecp.mvp.presenter.TestListPresenter
+import com.daomingedu.onecp.mvp.ui.activity.CheckGradeAct
+import com.daomingedu.onecp.mvp.ui.activity.EnrollTestAct
+import com.daomingedu.onecp.mvp.ui.activity.ProvinceAct
+import com.daomingedu.onecp.mvp.ui.activity.UpdateVideoAct
+import com.daomingedu.onecp.mvp.ui.adapter.TestListAdapter
+import com.jess.arms.base.BaseFragment
+import com.jess.arms.di.component.AppComponent
+import com.jess.arms.utils.ArmsUtils
+import kotlinx.android.synthetic.main.fragment_study_circle.*
+import kotlinx.android.synthetic.main.fragment_study_circle.recyclerView
+import kotlinx.android.synthetic.main.fragment_study_circle.swipeRefreshLayout
+import kotlinx.android.synthetic.main.fragment_test.*
+import org.jetbrains.anko.support.v4.startActivity
+import timber.log.Timber
+import javax.inject.Inject
+
+/**
+ * Created by jianhongxu on 3/15/21
+ * Description 测评页面
+ */
+class TestFragment : BaseFragment<TestListPresenter>(), TestListContract.View {
+
+    @Inject
+    lateinit var mAdapter: TestListAdapter
+
+    @Inject
+    lateinit var mData: MutableList<TestListBean>
+
+    companion object {
+        fun newInstance(): TestFragment {
+            return TestFragment()
+        }
+    }
+
+    override fun setupFragmentComponent(appComponent: AppComponent) {
+        DaggerTestListComponent
+            .builder()
+            .appComponent(appComponent)
+            .testListModule(TestListModule(this))
+            .build()
+            .inject(this)
+    }
+
+    override fun initView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        return inflater.inflate(R.layout.fragment_test, container, false)
+    }
+
+    override fun initData(savedInstanceState: Bundle?) {
+        recyclerView.adapter = mAdapter.apply {
+            setOnItemChildClickListener { adapter, view, position ->
+                when (view.id) {
+                    R.id.btnEnroll -> {
+
+
+                        startActivity<EnrollTestAct>(Constant.ENROLL_TEST_EXTRA to  mData[position].id)
+                    }
+                    R.id.btnUpdate -> {
+                        startActivity<UpdateVideoAct>(Constant.ENROLL_ID_EXTRA to  mData[position].testSignId)
+                    }
+                    R.id.btnCheck -> {
+                        startActivity<CheckGradeAct>(Constant.ENROLL_TEST_EXTRA to  mData[position].id)
+                    }
+                }
+            }
+        }
+        swipeRefreshLayout.setOnRefreshListener {
+            mPresenter?.getTest()
+        }
+
+        mPresenter?.getTest()
+    }
+
+    override fun setData(data: Any?) {
+
+    }
+
+    override fun requestTestListSuccess() {
+        swipeRefreshLayout.isRefreshing = false
+    }
+
+
+    override fun showMessage(message: String) {
+        ArmsUtils.snackbarText(message)
+    }
+
+    override fun launchActivity(intent: Intent) {
+        ArmsUtils.startActivity(intent)
+    }
+}

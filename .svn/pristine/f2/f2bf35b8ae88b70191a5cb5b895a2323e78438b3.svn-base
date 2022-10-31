@@ -1,0 +1,18 @@
+package com.daomingedu.onecp.di.component
+
+import androidx.fragment.app.Fragment
+import com.daomingedu.onecp.di.module.TestModule
+import com.jess.arms.di.component.AppComponent
+import com.jess.arms.di.scope.FragmentScope
+import dagger.Component
+import org.jetbrains.anko.appcompat.v7.Appcompat
+
+/**
+ * Created by jianhongxu on 3/15/21
+ * Description
+ */
+@FragmentScope
+@Component(modules = arrayOf(TestModule::class), dependencies = arrayOf(AppComponent::class))
+interface TestComponent {
+    fun inject(fragment:Fragment)
+}

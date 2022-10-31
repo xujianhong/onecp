@@ -1,0 +1,44 @@
+package com.daomingedu.onecp.mvp.ui.adapter
+
+import com.chad.library.adapter.base.BaseQuickAdapter
+import com.chad.library.adapter.base.BaseViewHolder
+import com.daomingedu.onecp.R
+import com.daomingedu.onecp.mvp.model.entity.TestListBean
+
+/**
+ * Created by jianhongxu on 3/18/21
+ * Description
+ */
+class TestListAdapter(datas:MutableList<TestListBean>):BaseQuickAdapter<TestListBean,BaseViewHolder>(
+    R.layout.item_test_list,datas) {
+    override fun convert(helper: BaseViewHolder?, item: TestListBean?) {
+        helper?.setText(R.id.tvEnrollTime,item?.startSignDate)
+        helper?.setText(R.id.tvTestName,item?.testName)
+
+        when(item?.isSign){
+            1->{
+                helper?.setVisible(R.id.btnEnroll,true)
+                helper?.addOnClickListener(R.id.btnEnroll)
+            }
+            else
+                ->helper?.setVisible(R.id.btnEnroll,false)
+        }
+        when(item?.isResult){
+            1->{
+                helper?.setVisible(R.id.btnCheck,true)
+                helper?.addOnClickListener(R.id.btnCheck)
+            }
+            else
+            ->helper?.setVisible(R.id.btnCheck,false)
+        }
+        when(item?.isUpload){
+            1->{
+                helper?.setVisible(R.id.btnUpdate,true)
+                helper?.addOnClickListener(R.id.btnUpdate)
+            }
+            else
+            ->helper?.setVisible(R.id.btnUpdate,false)
+        }
+
+    }
+}

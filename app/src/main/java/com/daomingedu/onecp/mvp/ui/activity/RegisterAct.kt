@@ -1,0 +1,371 @@
+package com.daomingedu.onecp.mvp.ui.activity
+
+import android.app.Activity
+import android.content.Intent
+import android.os.Bundle
+import android.text.Html
+import android.text.TextUtils
+import android.view.View
+import android.widget.AdapterView
+import com.codbking.widget.DatePickDialog
+import com.codbking.widget.bean.DateType
+import com.daomingedu.onecp.R
+import com.daomingedu.onecp.app.Constant
+import com.daomingedu.onecp.app.onClick
+import com.daomingedu.onecp.di.component.DaggerRegisterComponent
+import com.daomingedu.onecp.di.module.RegisterModule
+import com.daomingedu.onecp.mvp.contract.RegisterContract
+import com.daomingedu.onecp.mvp.model.entity.AboutUsBean
+import com.daomingedu.onecp.mvp.presenter.RegisterPresenter
+import com.daomingedu.onecp.mvp.ui.widget.LoadingDialog
+import com.jess.arms.base.BaseActivity
+import com.jess.arms.di.component.AppComponent
+import com.jess.arms.utils.ArmsUtils
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
+import kotlinx.android.synthetic.main.activity_register.*
+import org.jetbrains.anko.startActivity
+import timber.log.Timber
+import java.text.SimpleDateFormat
+import java.util.*
+import java.util.concurrent.TimeUnit
+
+
+class RegisterAct : BaseActivity<RegisterPresenter>(), RegisterContract.View,
+    AdapterView.OnItemSelectedListener {
+
+    //性别
+    private var sex: String = ""
+
+    //生日
+    private var birthDate: String = ""
+
+    //证件类型
+    private var credentialsType: Int = 0
+
+    //年级
+    private var gradeName: String = ""
+
+    //年级号
+    private var gradeNumber: String = ""
+
+
+    //班级
+    private var className: String = ""
+
+    //班级号
+    private var classNumber: String = ""
+
+    //省号
+    private var provinceNumber: String? = null
+
+    //市号
+    private var cityNumber: String? = null
+
+    //区号
+    private var regionNumber: String? = null
+
+    //学校id
+    private var schoolNumber: String? = null
+
+    private val loadingDialog: LoadingDialog by lazy {
+        LoadingDialog(this)
+    }
+    var disposable: Disposable? = null
+    override fun requestSendSMSSuccess() {
+        val count = 60L//倒计时60秒requestRegSuccess
+        disposable = Observable.interval(0, 1, TimeUnit.SECONDS)
+            .take(count + 1)
+            .map { aLong -> count - aLong }
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnSubscribe { tvSendCode.isEnabled = false }
+            .subscribe({ aLong -> tvSendCode.text = "${aLong}秒" }, { }, {
+                tvSendCode.isEnabled = true
+                tvSendCode.text = "获取验证码"
+            })
+    }
+
+    override fun requestRegSuccess() {
+        ArmsUtils.makeText(application, "注册账号成功")
+        startActivity<MainAct>()
+    }
+
+    override fun requestAboutUsSuccess(data: AboutUsBean?, type: Int) {
+        if (type == 1) {
+            startActivity<CommonWebAct>(
+                Constant.URL_EXTRA to data?.userAgreement,
+                Constant.TITLE_EXTRA to "用户协议"
+            )
+        } else if (type == 2) {
+            startActivity<CommonWebAct>(
+                Constant.URL_EXTRA to data?.privacyAgreement,
+                Constant.TITLE_EXTRA to "隐私政策"
+            )
+        }
+    }
+
+    override fun setupActivityComponent(appComponent: AppComponent) {
+        DaggerRegisterComponent //如找不到该类,请编译一下项目
+            .builder()
+            .appComponent(appComponent)
+            .registerModule(RegisterModule(this))
+            .build()
+            .inject(this)
+    }
+
+
+    override fun initView(savedInstanceState: Bundle?): Int {
+        return R.layout.activity_register //如果你不需要框架帮你设置 setContentView(id) 需要自行设置,请返回 0
+    }
+
+
+    override fun initData(savedInstanceState: Bundle?) {
+        spCredentialsType.onItemSelectedListener = this
+        spSelectGrade.onItemSelectedListener = this
+        spSelectClass.onItemSelectedListener = this
+        spSelectSex.onItemSelectedListener = this
+
+
+
+        tvSendCode.onClick {
+            val mobile = etInputPhoneNumber.text.toString().trim()
+            if (TextUtils.isEmpty(mobile)) {
+                ArmsUtils.makeText(application, "手机号不能为空")
+                return@onClick
+            }
+            mPresenter?.sendSMS(mobile)
+        }
+        register_user.onClick {
+
+            mPresenter?.getProtocol(1)
+        }
+        register_private.onClick {
+            mPresenter?.getProtocol(2)
+        }
+        btnRegister.onClick {
+//            val credentialsType:String = when(spCredentialsType.get)
+
+            if(!cbAgree.isChecked){
+                ArmsUtils.makeText(application, "请勾选同意相关协议政策")
+                return@onClick
+            }
+
+            val mobile = etInputPhoneNumber.text.toString().trim()
+            if (TextUtils.isEmpty(mobile)) {
+                ArmsUtils.makeText(application, "手机号不能为空")
+                return@onClick
+            }
+            val verCode = etVerCode.text.toString().trim()
+            if (TextUtils.isEmpty(verCode)) {
+                ArmsUtils.makeText(application, "验证码不能为空")
+                return@onClick
+            }
+            val pwd = etInputPwd.text.toString().trim()
+            if (TextUtils.isEmpty(pwd)) {
+                ArmsUtils.makeText(application, "密码不能为空")
+                return@onClick
+            }
+            if (TextUtils.isEmpty(sex)) {
+                ArmsUtils.makeText(application, "选择性别")
+                return@onClick
+            }
+            if (TextUtils.isEmpty(birthDate)) {
+                ArmsUtils.makeText(application, "选择生日")
+                return@onClick
+            }
+            if (TextUtils.isEmpty(gradeName)) {
+                ArmsUtils.makeText(application, "选择年级")
+                return@onClick
+            }
+            if (TextUtils.isEmpty(className)) {
+                ArmsUtils.makeText(application, "选择班级")
+                return@onClick
+            }
+            if (TextUtils.isEmpty(regionNumber)) {
+                ArmsUtils.makeText(application, "选择省市区")
+                return@onClick
+            }
+            if (TextUtils.isEmpty(schoolNumber)) {
+                ArmsUtils.makeText(application, "选择学校")
+                return@onClick
+            }
+            if (credentialsType == 0) {
+                ArmsUtils.makeText(application, "选择证件类型")
+                return@onClick
+            }
+            val name: String = etInputUserName.text.toString().trim()
+            if (TextUtils.isEmpty(name)) {
+                ArmsUtils.makeText(application, "输入用户名")
+                return@onClick
+            }
+            val identityCard = etInputCredentialsNumber.text.toString().trim()
+            if (TextUtils.isEmpty(identityCard)) {
+                ArmsUtils.makeText(application, "输入证件号码")
+                return@onClick
+            }
+            mPresenter?.reg(
+                name,
+                mobile,
+                pwd,
+                credentialsType,
+                identityCard,
+                birthDate,
+                sex,
+                provinceNumber!!,
+                cityNumber!!,
+                regionNumber!!,
+                schoolNumber!!,
+                gradeName,
+                className,
+                gradeNumber,
+                classNumber,
+                verCode
+            )
+        }
+
+        tvSelectProvince.onClick {
+            val intent = Intent(this, ProvinceAct::class.java)
+            startActivityForResult(intent, Constant.PROVINCE_TURN_EXTRA)
+
+        }
+
+        tvSelectSchool.onClick {
+            if (TextUtils.isEmpty(regionNumber)) {
+                ArmsUtils.makeText(application, "先选择省市区")
+                return@onClick
+            }
+            val intent = Intent(this, SchoolAct::class.java)
+            intent.putExtra(Constant.REGION_EXTRA, regionNumber)
+            startActivityForResult(intent, Constant.SCHOOL_TURN_EXTRA)
+        }
+
+        tvSelectBirth.onClick {
+            val dialog = DatePickDialog(this)
+            //设置上下年分限制
+            dialog.setYearLimt(80)
+            //设置标题
+            dialog.setTitle("选择时间")
+            //设置类型
+            dialog.setType(DateType.TYPE_YMD)
+            //设置消息体的显示格式，日期格式
+            dialog.setMessageFormat("yyyy-MM-dd")
+            //设置选择回调
+            dialog.setOnChangeLisener(null)
+            //设置点击确定按钮回调
+            dialog.setOnSureLisener {
+                val sdf = SimpleDateFormat("yyyy-MM-dd")
+                birthDate = sdf.format(it)
+                tvSelectBirth.text = birthDate
+
+            }
+            dialog.show()
+        }
+
+        btnExit.onClick {
+            this.killMyself()
+        }
+    }
+
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            Constant.PROVINCE_TURN_EXTRA -> if (resultCode == Activity.RESULT_OK) {
+                provinceNumber = data?.getStringExtra(Constant.PROVINCE_EXTRA)
+                cityNumber = data?.getStringExtra(Constant.CITY_EXTRA)
+                regionNumber = data?.getStringExtra(Constant.REGION_EXTRA)
+                tvSelectProvince.text = data?.getStringExtra(Constant.PROVINCE_SHOW_EXTRA)
+
+                Timber.e("省 $provinceNumber  市 $cityNumber  区 $regionNumber ")
+
+            }
+
+            Constant.SCHOOL_TURN_EXTRA -> if (resultCode == Activity.RESULT_OK) {
+                tvSelectSchool.text = data?.getStringExtra(Constant.SCHOOL_NAME_EXTRA)
+                schoolNumber = data?.getStringExtra(Constant.SCHOOL_NUMBER_EXTRA)
+            }
+        }
+    }
+
+
+    override fun showLoading() {
+        loadingDialog.show()
+    }
+
+    override fun hideLoading() {
+        loadingDialog.dismiss()
+    }
+
+    override fun showMessage(message: String) {
+        ArmsUtils.snackbarText(message)
+    }
+
+    override fun launchActivity(intent: Intent) {
+        ArmsUtils.startActivity(intent)
+    }
+
+    override fun killMyself() {
+        finish()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        disposable?.dispose()
+    }
+
+
+    override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+        when (parent.id) {
+            R.id.spCredentialsType -> credentialsType =
+                when (spCredentialsType.getItemAtPosition(position)) {
+                    "身份证" -> 1
+                    "港澳通行证" -> 2
+                    "台胞证" -> 3
+                    "护照" -> 4
+                    else
+                    -> 0
+                }
+            R.id.spSelectGrade -> {
+                when (position) {
+                    0 -> {
+                        gradeNumber = ""
+                        gradeName = ""
+                    }
+                    else -> {
+                        gradeName = spSelectGrade.getItemAtPosition(position).toString()
+                        gradeNumber = position.toString().trim()
+                    }
+                }
+            }
+
+            R.id.spSelectClass -> {
+                when (position) {
+                    0 -> {
+                        className = ""
+                        classNumber = ""
+                    }
+                    else -> {
+                        className = spSelectClass.getItemAtPosition(position).toString()
+                        classNumber = position.toString().trim()
+                    }
+                }
+
+            }
+
+            R.id.spSelectSex -> sex = when (spSelectSex.getItemAtPosition(position)) {
+                "男" -> "M"
+                "女" -> "F"
+                else
+                -> ""
+            }
+
+        }
+    }
+
+    override fun onNothingSelected(parent: AdapterView<*>?) {
+
+    }
+
+
+}

@@ -1,0 +1,33 @@
+package com.daomingedu.onecp.mvp.presenter
+
+import android.app.Application
+import com.daomingedu.onecp.mvp.contract.TestContract
+import com.jess.arms.di.scope.FragmentScope
+import com.jess.arms.http.imageloader.ImageLoader
+import com.jess.arms.integration.AppManager
+import com.jess.arms.mvp.BasePresenter
+import me.jessyan.rxerrorhandler.core.RxErrorHandler
+import javax.inject.Inject
+
+/**
+ * Created by jianhongxu on 3/15/21
+ * Description
+ */
+@FragmentScope
+class TestPresenter
+@Inject
+constructor(model:TestContract.Model,rootView:TestContract.View):
+BasePresenter<TestContract.Model,TestContract.View>(model,rootView){
+
+    @Inject
+    lateinit var mErrorHandler: RxErrorHandler
+    @Inject
+    lateinit var mApplication: Application
+    @Inject
+    lateinit var mImageLoader: ImageLoader
+    @Inject
+    lateinit var mAppManager: AppManager
+
+
+
+}

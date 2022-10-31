@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <FrameLayout
+            android:id="@+id/flContainer"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_height="0dp"/>
+
+    <View
+            android:background="@color/color_d6d6d6"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"/>
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:background="@color/white"
+            android:layout_height="60dp">
+
+        <LinearLayout
+                android:id="@+id/llTabHome"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:layout_height="match_parent">
+
+            <ImageView
+                    android:id="@+id/ivTabHome"
+                    android:src="@mipmap/tab_home_selected"
+                    android:layout_width="wrap_content"
+                android:layout_marginBottom="3dp"
+                    android:layout_height="wrap_content"/>
+
+            <TextView
+                    android:id="@+id/tvTabHome"
+                    android:text="首页"
+                    android:textColor="@color/blue_500"
+                    android:textSize="18sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/llTabTest"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/ivTabTest"
+                android:src="@mipmap/tab_test_default"
+                android:layout_width="wrap_content"
+                android:layout_marginBottom="3dp"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:id="@+id/tvTabTest"
+                android:text="测评"
+                android:textColor="@color/color_686868"
+                android:textSize="18sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+
+        <LinearLayout
+                android:id="@+id/llTabStudyCircle"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:layout_height="match_parent">
+
+            <ImageView
+                    android:id="@+id/ivTabStudyCircle"
+                    android:src="@mipmap/tab_study_circle_default"
+                    android:layout_width="wrap_content"
+                android:layout_marginBottom="3dp"
+
+                    android:layout_height="wrap_content"/>
+
+            <TextView
+                    android:id="@+id/tvTabStudyCircle"
+                    android:text="学习圈"
+                    android:textColor="@color/color_686868"
+                    android:textSize="18sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/llTabQuestion"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/ivTabQuestion"
+                android:src="@mipmap/tab_question_default"
+                android:layout_width="wrap_content"
+                android:layout_marginBottom="3dp"
+
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:id="@+id/tvTabQuestion"
+                android:text="题库"
+                android:textColor="@color/color_686868"
+                android:textSize="18sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+
+        <LinearLayout
+                android:id="@+id/llTabMine"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:layout_height="match_parent">
+
+            <ImageView
+                    android:id="@+id/ivTabMine"
+                    android:src="@mipmap/tab_mine_default"
+                    android:layout_width="wrap_content"
+                android:layout_marginBottom="3dp"
+                    android:layout_height="wrap_content"/>
+
+            <TextView
+                    android:id="@+id/tvTabMine"
+                    android:text="我的"
+                    android:textColor="@color/color_686868"
+                    android:textSize="18sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

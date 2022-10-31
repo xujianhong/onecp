@@ -1,0 +1,89 @@
+package com.daomingedu.onecp.mvp.presenter
+
+import android.app.Application
+import com.jess.arms.di.scope.ActivityScope
+import com.jess.arms.http.imageloader.ImageLoader
+import com.jess.arms.integration.AppManager
+import com.jess.arms.mvp.BasePresenter
+import me.jessyan.rxerrorhandler.core.RxErrorHandler
+import me.jessyan.rxerrorhandler.handler.ErrorHandleSubscriber
+import me.jessyan.rxerrorhandler.handler.RetryWithDelay
+import com.daomingedu.onecp.app.Constant
+import com.daomingedu.onecp.app.Preference
+import com.daomingedu.onecp.mvp.contract.SplashContract
+import com.daomingedu.onecp.mvp.model.api.Api
+import com.daomingedu.onecp.mvp.model.entity.BaseJson
+import com.daomingedu.onecp.mvp.model.entity.SessionIdBean
+import com.daomingedu.onecp.util.RxUtils
+import timber.log.Timber
+import javax.inject.Inject
+
+@ActivityScope
+class SplashPresenter
+@Inject
+constructor(model: SplashContract.Model, rootView: SplashContract.View) :
+    BasePresenter<SplashContract.Model, SplashContract.View>(model, rootView) {
+    @Inject
+    lateinit var mErrorHandler: RxErrorHandler
+    @Inject
+    lateinit var mApplication: Application
+    @Inject
+    lateinit var mImageLoader: ImageLoader
+    @Inject
+    lateinit var mAppManager: AppManager
+
+    private val sessionid by Preference(Constant.SESSIONID, "")
+    override fun onDestroy() {
+        super.onDestroy()
+    }
+
+    fun checkSessionId(){
+        mModel.checkSessionId(sessionid)
+            .retryWhen(RetryWithDelay(0, 5))
+            .compose(RxUtils.applySchedulers(mRootView))
+            .subscribe(object : ErrorHandleSubscriber<BaseJson<SessionIdBean>>(mErrorHandler){
+                override fun onNext(t: BaseJson<SessionIdBean>) {
+                    if (Api.SUCCESS==t.code) {
+                        t.data?.let { mRootView.requestCheckSessionIdSuccess(it) }
+                    }else{
+                        mRootView.showMessage(t.msg)
+                    }
+                }
+
+                override fun onError(t: Throwable) {
+                    super.onError(t)
+                    mRootView.showMessage(t.toString())
+                }
+
+            })
+    }
+    /*fun fileSize(){
+        mModel.fileSize(Constant.KEY)
+            .subscribeOn(Schedulers.io())
+            .retryWhen(RetryWithDelay(2, 5))
+            .subscribeOn(AndroidSchedulers.mainThread())
+            .observeOn(AndroidSchedulers.mainThread())
+            .compose(RxLifecycleUtils.bindToLifecycle(mRootView))
+            .subscribe(object : ErrorHandleSubscriber<BaseJson<FileSizeBean>>(mErrorHandler) {
+                override fun onNext(t: BaseJson<FileSizeBean>) {
+                    if (t.code == Api.SUCCESS) {
+                        val data = t.data
+                        if (data != null) {
+                            mImageFileSize = data.image.toLong()
+                            mRecordFileSize = data.record.toLong()
+                            mVideoFileSize = data.video.toLong()
+                        }
+                        mCosPath = t.data?.cosPath?:""
+                        mRootView.requestFileSizeSuccess()
+                    } else {
+                        mRootView.requestFileSizeFail()
+                        mRootView.showMessage(t.msg)
+                    }
+                }
+
+                override fun onError(t: Throwable) {
+                    super.onError(t)
+                }
+            })
+    }*/
+}

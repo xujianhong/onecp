@@ -1,0 +1,1 @@
+-keep class com.daomingedu.onecp.app.GlobalConfiguration

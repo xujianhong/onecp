@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/pop_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+
+        android:orientation="vertical">
+
+    <Button
+            android:id="@+id/pop_upload_photos"
+            style="?borderlessButtonStyle"
+            android:layout_width="wrap_content"
+
+            android:layout_height="wrap_content"
+            android:background="@drawable/sex_select_bg"
+
+            android:drawablePadding="5dp"
+            android:paddingLeft="20dp"
+            android:paddingTop="3dp"
+            android:paddingRight="20dp"
+            android:paddingBottom="3dp"
+            android:text="上传照片"
+            android:textColor="@color/blue_500"
+            android:textSize="13sp" />
+
+
+    <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/cardview_shadow_end_color" />
+
+    <Button
+            android:id="@+id/pop_upload_video"
+            style="?borderlessButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/sex_select_bg"
+
+            android:drawablePadding="5dp"
+            android:paddingLeft="20dp"
+            android:paddingTop="3dp"
+            android:paddingRight="20dp"
+            android:paddingBottom="3dp"
+            android:text="上传视频"
+            android:textColor="@color/blue_500"
+            android:textSize="13sp" />
+
+    <Button
+            android:id="@+id/pop_upload_recording"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/sex_select_bg"
+
+            android:drawablePadding="5dp"
+            android:paddingLeft="20dp"
+            android:paddingTop="3dp"
+            android:paddingRight="20dp"
+            android:paddingBottom="3dp"
+            android:text="录制音频"
+            android:textColor="@color/blue_500"
+            android:textSize="13sp"
+            android:visibility="gone" />
+
+</LinearLayout>
